@@ -14,7 +14,6 @@ Loan::Loan(const Item::key_t &itemName, const string &borrowerName)
 
 Loan::~Loan()
 {
-
 }
 
 string Loan::to_string() const

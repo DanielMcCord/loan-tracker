@@ -2,10 +2,8 @@
 
 Record::Record()
 {
-
 }
 
 Record::~Record()
 {
-
 }
