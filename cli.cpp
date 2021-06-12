@@ -190,8 +190,11 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         } //
     },
     {
-        "save", [](CLI *self) //
-        {} //
+        "save",
+        [](CLI *self) //
+        {
+
+        } //
     },
     {
         "exit",
