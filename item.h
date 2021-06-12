@@ -1,17 +1,18 @@
 #ifndef ITEM_H
 #define ITEM_H
 
-#include "record.h"
+#include "autoincrementable.h"
 #include <map>
 #include <string>
 
-class Item : public Record
+class Item : public AutoIncrementable
 {
   public:
-    typedef std::string key_t;
+    //    typedef std::string key_t;
     Item();
-    Item(const key_t &name, const std::string &description);
+    Item(const std::string &name, const std::string &description);
     key_t primaryKey;
+    std::string name;
     std::string description;
     std::string to_string() const;
 };

@@ -2,19 +2,17 @@
 
 using namespace std;
 
-// Item::map_t Item::items;
-
 Item::Item() : Item::Item("", "")
 {
 }
 
-Item::Item(const key_t &name, const string &description)
+Item::Item(const string &name, const string &description)
 {
-    primaryKey = name;
+    this->name = name;
     this->description = description;
 }
 
 string Item::to_string() const
 {
-    return primaryKey + ": " + description;
+    return name + ": " + description;
 }

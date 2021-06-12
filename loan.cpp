@@ -2,13 +2,13 @@
 
 using namespace std;
 
-Loan::Loan() : Loan::Loan("", "")
+Loan::Loan() : Loan::Loan(0, "")
 {
 }
 
-Loan::Loan(const Item::key_t &itemName, const string &borrowerName)
+Loan::Loan(const Item::key_t &itemID, const string &borrowerName)
 {
-    this->itemName = itemName;
+    this->itemID = itemID;
     this->borrowerName = borrowerName;
 }
 

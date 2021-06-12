@@ -2,13 +2,50 @@
 
 using namespace std;
 
-CLI::CLI()
-    : validCommands({"create item", "create loan", "list items", "list loans", "delete item",
-                     "save", "exit", "help"})
+//clang-format off
+// If I was on ClangFormat 11, I'd probably use the BeforeLambdaBody rule.
+CLI::CLI() : validCommands({
+    {
+        "create item", []
+        {
+        }
+    },
+    {
+        "create loan", []
+        {
+        }
+    },
+    {
+        "list items", []
+        {
+        }
+    },
+    {
+        "list loans", []
+        {
+        }
+    },
+    {
+        "delete item", []
+        {
+        }
+    },
+    {
+        "save", []
+        {
+        }
+    },
+    {
+        "exit", []
+        {
+        }
+    }
+})
 {
 }
+// clang-format on
 
-CLI::CLI(const vector<string> &validCommands)
+CLI::CLI(const map<string, function<void()>> &validCommands)
 {
     this->validCommands = validCommands;
 }
@@ -20,6 +57,20 @@ void CLI::welcome() const
     list_valid_commands();
 }
 
+bool CLI::attempt_command(const string &command)
+{
+    if (validCommands.count(command) == 1)
+    {
+        validCommands.at(command)();
+        return true;
+    }
+    else
+    {
+        on_invalid_command(command);
+        return false;
+    }
+}
+
 void CLI::on_invalid_command(const string &command) const
 {
     cout << "Unrecognized command '" << command << "'." << endl;
@@ -28,11 +79,11 @@ void CLI::on_invalid_command(const string &command) const
 
 void CLI::list_valid_commands() const
 {
-    cout << "The following commands are supported:" << endl;
+    cout << "The following commands are available:" << endl;
 
-    for (const string &command : validCommands)
+    for (const auto &command : validCommands)
     {
-        cout << command << endl;
+        cout << command.first << endl;
     }
 }
 

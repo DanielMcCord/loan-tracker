@@ -27,7 +27,12 @@ template <typename RecordT> class DBTable
      * @return Whether the action was successful.
      */
     bool add(RecordT &record, bool allowRecycledKey = true);
-    RecordT findByPrimaryKey(const key_t &primaryKey) const;
+    RecordT at(const key_t &primaryKey) const;
+    /**
+     * @brief Returns the record with the given name.
+     * @param name
+     * @return
+     */
     RecordT findByName(const std::string &name) const;
     /**
      * @brief Removes a record from the table.
@@ -39,8 +44,12 @@ template <typename RecordT> class DBTable
   private:
     map_t records;
     /**
+     * @brief Specifies whether the name field must be unique for each record in the table.
+     */
+    bool uniqueNames;
+    /**
      * Used with auto-incrementable records only. Contains the value of the next key.
-     * If records are not auto-incrementable, this value sits unused and is never incrmeneted.
+     * If records are not auto-incrementable, this value sits unused and is never incremeneted.
      */
     size_type nextKey;
     /**
@@ -49,7 +58,7 @@ template <typename RecordT> class DBTable
     std::queue<key_t> removedKeys;
 };
 
-template <typename RecordT> DBTable<RecordT>::DBTable() : nextKey(0)
+template <typename RecordT> DBTable<RecordT>::DBTable() : nextKey(0), uniqueNames(true)
 {
 }
 
@@ -90,7 +99,7 @@ template <typename RecordT> bool DBTable<RecordT>::add(RecordT &record, bool all
 }
 
 template <typename RecordT>
-RecordT DBTable<RecordT>::findByPrimaryKey(const key_t &primaryKey) const
+RecordT DBTable<RecordT>::at(const key_t &primaryKey) const
 {
     return records.at(primaryKey);
 }

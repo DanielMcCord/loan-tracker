@@ -11,9 +11,9 @@ class Loan : public AutoIncrementable
 {
   public:
     Loan();
-    Loan(const Item::key_t &itemName, const std::string &borrowerName);
+    Loan(const Item::key_t &itemID, const std::string &borrowerName);
     ~Loan();
-    Item::key_t itemName;
+    Item::key_t itemID;
     std::string borrowerName;
     std::string to_string() const;
 };
