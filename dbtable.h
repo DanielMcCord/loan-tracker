@@ -4,6 +4,7 @@
 #include "autoincrementable.h"
 #include <map>
 #include <queue>
+#include <string>
 #include <type_traits> // is_base_of_v
 
 /**
@@ -26,7 +27,8 @@ template <typename RecordT> class DBTable
      * @return Whether the action was successful.
      */
     bool add(RecordT &record, bool allowRecycledKey = true);
-    RecordT fetch(key_t primaryKey);
+    RecordT findByPrimaryKey(const key_t &primaryKey) const;
+    RecordT findByName(const std::string &name) const;
     /**
      * @brief Removes a record from the table.
      * @param primaryKey
@@ -47,8 +49,7 @@ template <typename RecordT> class DBTable
     std::queue<key_t> removedKeys;
 };
 
-template <typename RecordT>
-DBTable<RecordT>::DBTable() : nextKey(0)
+template <typename RecordT> DBTable<RecordT>::DBTable() : nextKey(0)
 {
 }
 
@@ -88,9 +89,22 @@ template <typename RecordT> bool DBTable<RecordT>::add(RecordT &record, bool all
     }
 }
 
-template <typename RecordT> RecordT DBTable<RecordT>::fetch(key_t primaryKey)
+template <typename RecordT>
+RecordT DBTable<RecordT>::findByPrimaryKey(const key_t &primaryKey) const
 {
     return records.at(primaryKey);
+}
+
+template <typename RecordT>
+RecordT DBTable<RecordT>::findByName(const std::string &name) const
+{
+    for(const auto &pair : records)
+    {
+        if (pair.second.name == name)
+        {
+            return pair.second;
+        }
+    }
 }
 
 template <typename RecordT>
