@@ -3,14 +3,29 @@
 #include "item.h"
 #include "loan.h"
 #include "loanschema.h"
+#include <cstring>
 #include <iostream>
-
 #include <vector>
 
 using namespace std;
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
+    string loadFileName = "";
+
+    // If the user does not load a file, tell them how to do it.
+    if (argc >= 3 && strcmp(argv[1], "-f") == 0)
+    {
+        loadFileName = argv[2];
+        cout << "Loaded from file: " << loadFileName << endl;
+    }
+    else
+    {
+        string commandName(argv[0]);
+
+        cout << "Use `" << argv[0] << ' '
+             << "-f FILENAME` to load records from a file." << endl;
+    }
 
     LoanSchema db;
     CLI cli(&db);

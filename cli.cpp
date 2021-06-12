@@ -313,8 +313,22 @@ void CLI::onExit()
     if (unsavedChanges)
     {
         unsigned char shouldSave = prompt("\nSave changes? (y/N)\n > ").at(0);
+
         if (shouldSave == 'y' || shouldSave == 'Y')
         {
         }
     }
+    else
+    {
+    }
+}
+
+void CLI::save()
+{
+
+}
+
+void CLI::load()
+{
+
 }

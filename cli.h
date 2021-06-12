@@ -24,6 +24,8 @@ class CLI
     void list_valid_commands() const;
     std::string prompt(const std::string &message = "") const;
     void onExit();
+    void save();
+    void load();
     LoanSchema *db;
     bool unsavedChanges;
 
