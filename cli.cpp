@@ -4,162 +4,192 @@
 using namespace std;
 
 // If I was on clang-format 11, I'd probably use the BeforeLambdaBody rule.
-const map<string, function<void(CLI *)>> CLI::validCommands = {
-    {"create item",
+// Empty comments are to help clang-format do what I meant it to,
+// without having to turn it off or on.
+const map<string, function<void(CLI *)>> CLI::validCommands = { //
+    {
+        "create item",
+        [](CLI *self) //
+        {
+            string itemName = "";
+            while (true)
+            {
+                itemName = self->prompt("Please enter a name for the new item.\n > ");
+
+                if (itemName == "")
+                {
+                    cout << "Item name cannot be empty." << endl;
+                }
+                else if (!self->db->items.findByName(itemName).isEmpty())
+                {
+                    cout << "An item with that name already exists. Choose a different name."
+                         << endl;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            string itemDescription;
+            while (true)
+            {
+                itemDescription = self->prompt("Enter a description.\n > ");
+
+                if (itemDescription != "")
+                {
+                    break;
+                }
+                else
+                {
+                    cout << "Please add a one-line description of the item.\n";
+                }
+            }
+
+            Item toAdd(itemName, itemDescription);
+            self->db->items.add(toAdd);
+        } //
+    },
+    {
+        "create loan",
+        [](CLI *self) //
+        {
+            if (self->db->items.records.empty())
+            {
+            }
+            else
+            {
+                string borrowerName = "";
+
+                while (true)
+                {
+                    borrowerName = self->prompt("Please enter the name of the borrower.\n > ");
+                    if (borrowerName != "")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        cout << "Borrower name cannot be empty.\n";
+                    }
+                }
+
+                Item::key_t itemID = 0;
+
+                while (true)
+                {
+                    string itemName = self->prompt("What is being lent to them?\n > ");
+                    Item toLoan = self->db->items.findByName(itemName);
+
+                    // Make sure the item actually exists.
+                    if (!toLoan.isEmpty())
+                    {
+                        itemID = toLoan.primaryKey;
+                        break;
+                    }
+                    else
+                    {
+                        cout << "Item not found. Please choose one of the following:" << endl;
+                        CLI::validCommands.at("list items");
+                    }
+                }
+
+                Loan toAdd(itemID, borrowerName);
+                self->db->loans.add(toAdd);
+            }
+        } //
+    },
+    {
+        //
+        "list items",
+        [](CLI *self) //
+        {
+            cout << self->db->items.toString() << endl; //
+        } //
+    },
+    {
+        //
+        "list loans",
+        [](CLI *self) //
+        {
+            cout << self->db->loans.toString() << endl; //
+        } //
+    },
+    {
+        "delete item",
+        [](CLI *self) //
+        {
+            // Prompt user for item to delete.
+            string toDelete = "";
+            size_t itemID = 0;
+
+            // This loop goes until the item to delete is a valid one.
+            while (true)
+            {
+                toDelete = self->prompt("Choose an item to delete.\n > ");
+                // Check that the item exists.
+                size_t itemFound = 0;
+
+                // Need the ID for later.
+                itemID = 0;
+
+                for (const auto &itemRecord : self->db->items.records)
+                {
+                    ++itemFound;
+                }
+
+                if (itemFound < 1)
+                {
+                    cout << "There is no item with that name to delete." << endl;
+                    continue;
+                }
+
+                // Make sure no one is using it.
+                size_t inUse = 0;
+
+                for (const auto &loanRecord : self->db->loans.records)
+                {
+                    if (loanRecord.second.itemID == itemID)
+                    {
+                        ++inUse;
+                    }
+                }
+
+                if (inUse)
+                {
+                    cout << "Can't delete: would orphan " << inUse << " loan records." << endl;
+                    continue;
+                }
+
+                // We can delete it.
+                break;
+            }
+
+            DBTable<Item>::size_type removed = (self->db->items.remove(itemID));
+
+            // Tell the user what happened.
+            switch (removed)
+            {
+            case 0:
+                cout << "Failed to delete '" << toDelete << "' for an unknown reason." << endl;
+                break;
+            case 1:
+                cout << "Deletion completed successfuly." << endl;
+                break;
+            default:
+                // The most likely reason for this would be if a multimap was used.
+                cout << "Unknown error. Hic sunt dracones." << endl;
+                break;
+            }
+        } //
+    },
+    {"delete loan",
      [](CLI *self) {
-         string itemName = "";
-         while (true)
-         {
-             itemName = self->prompt("Please enter a name for the new item.\n > ");
 
-             if (itemName == "")
-             {
-                 cout << "Item name cannot be empty." << endl;
-             }
-             else if (!self->db->items.findByName(itemName).isEmpty())
-             {
-                 cout << "An item with that name already exists. Choose a different name." << endl;
-             }
-             else
-             {
-                 break;
-             }
-         }
-
-         string itemDescription;
-         while (true)
-         {
-             itemDescription = self->prompt("Enter a description.\n > ");
-
-             if (itemDescription != "")
-             {
-                 break;
-             }
-             else
-             {
-                 cout << "Please add a one-line description of the item.\n";
-             }
-         }
-
-         Item toAdd(itemName, itemDescription);
-         self->db->items.add(toAdd);
-     }},
-    {"create loan",
-     [](CLI *self) {
-         if (self->db->items.records.empty())
-         {
-         }
-         else
-         {
-             string borrowerName = "";
-
-             while (true)
-             {
-                 borrowerName = self->prompt("Please enter the name of the borrower.\n > ");
-                 if (borrowerName != "")
-                 {
-                     break;
-                 }
-                 else
-                 {
-                     cout << "Borrower name cannot be empty.\n";
-                 }
-             }
-
-             Item::key_t itemID = 0;
-
-             while (true)
-             {
-                 string itemName = self->prompt("What is being lent to them?\n > ");
-                 Item toLoan = self->db->items.findByName(itemName);
-
-                 // Make sure the item actually exists.
-                 if (!toLoan.isEmpty())
-                 {
-                     itemID = toLoan.primaryKey;
-                     break;
-                 }
-                 else
-                 {
-                     cout << "Item not found. Please choose one of the following:" << endl;
-                     CLI::validCommands.at("list items");
-                 }
-             }
-
-             Loan toAdd(itemID, borrowerName);
-             self->db->loans.add(toAdd);
-         }
-     }},
-    {"list items", [](CLI *self) { cout << self->db->items.toString() << endl; }},
-    {"list loans", [](CLI *self) { cout << self->db->loans.toString() << endl; }},
-    {"delete item",
-     [](CLI *self) {
-         // Prompt user for item to delete.
-         string toDelete = "";
-         size_t itemID = 0;
-
-         // This loop goes until the item to delete is a valid one.
-         while (true)
-         {
-             toDelete = self->prompt("Choose an item to delete.\n > ");
-             // Check that the item exists.
-             size_t itemFound = 0;
-
-             // Need the ID for later.
-             itemID = 0;
-
-             for (const auto &itemRecord : self->db->items.records)
-             {
-                 ++itemFound;
-             }
-
-             if (itemFound < 1)
-             {
-                 cout << "There is no item with that name to delete." << endl;
-                 continue;
-             }
-
-             // Make sure no one is using it.
-             size_t inUse = 0;
-
-             for (const auto &loanRecord : self->db->loans.records)
-             {
-                 if (loanRecord.second.itemID == itemID)
-                 {
-                     ++inUse;
-                 }
-             }
-
-             if (inUse)
-             {
-                 cout << "Can't delete: would orphan " << inUse << " loan records." << endl;
-                 continue;
-             }
-
-             // We can delete it.
-             break;
-         }
-
-         DBTable<Item>::size_type removed = (self->db->items.remove(itemID));
-
-         // Tell the user what happened.
-         switch (removed)
-         {
-         case 0:
-             cout << "Failed to delete '" << toDelete << "' for an unknown reason." << endl;
-             break;
-         case 1:
-             cout << "Deletion completed successfuly." << endl;
-             break;
-         default:
-             // The most likely reason for this would be if a multimap was used.
-             cout << "Unknown error. Hic sunt dracones." << endl;
-             break;
-         }
      }},
     {"save", [](CLI *self) {}},
     {"exit", [](CLI *self) { self->onExit(); }},
-    {"help", [](CLI *self) {}}};
+    {"help", [](CLI *self) { self->list_valid_commands() }}};
 
 CLI::CLI(LoanSchema *db)
 {

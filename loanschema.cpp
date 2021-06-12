@@ -1,5 +1,5 @@
 #include "loanschema.h"
 
-LoanSchema::LoanSchema()
+LoanSchema::LoanSchema() : loans(&(this->items))
 {
 }

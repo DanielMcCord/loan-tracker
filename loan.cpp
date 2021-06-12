@@ -10,6 +10,7 @@ Loan::Loan(const Item::key_t &itemID, const string &borrowerName)
 {
     this->itemID = itemID;
     this->name = borrowerName;
+    parent = nullptr;
 }
 
 Loan::~Loan()
@@ -26,5 +27,16 @@ bool Loan::isEmpty() const
 
 string Loan::toString() const
 {
-    return "";
+    // To find info about its item, the loan needs to be able to dereference both of these pointers.
+    bool canGetItemInfo = parent != nullptr && parent->sibling != nullptr;
+    string sep = " / ";
+
+    // I did some trickery to make this work.
+    return to_string(primaryKey) + sep +
+           /*(canGetItemInfo
+                // Give the user-friendly item name if possible
+                ?*/ parent->sibling->records.at(itemID).name
+                // or fall back on the opaque itemIDif necessary.
+                /*: to_string(itemID))*/ +
+           sep + name;
 }

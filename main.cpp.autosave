@@ -11,6 +11,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+    
     LoanSchema db;
     CLI cli(&db);
     cli.welcome();

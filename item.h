@@ -8,7 +8,6 @@
 class Item : public AutoIncrementable
 {
   public:
-    //    typedef std::string key_t;
     Item();
     Item(const std::string &name, const std::string &description);
     key_t primaryKey;

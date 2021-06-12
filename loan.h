@@ -3,6 +3,7 @@
 
 // Include What You Use
 #include "autoincrementable.h"
+#include "dbtable.h"
 #include "item.h"
 #include <cstddef> // for size_t
 #include <string>
@@ -18,6 +19,7 @@ class Loan : public AutoIncrementable
      * @brief The name of the borrower.
      */
     std::string name;
+    DBTable<Loan> *parent;
     bool isEmpty() const override;
     std::string toString() const override;
 };

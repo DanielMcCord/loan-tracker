@@ -2,6 +2,8 @@
 #define DBTABLE_H
 
 #include "autoincrementable.h"
+#include "databaseparentawarable.h"
+#include "item.h"
 #include <map>
 #include <queue>
 #include <string>
@@ -9,7 +11,8 @@
 
 /**
  * A model of some of the features of a table in a relational database.
- * Will auto-increment the primary key if the records inherit from AutoIncrementable.
+ * Recognizes AutoIncrementable and DatabaseParentAwarable, and will implement the
+ * semantics accordingly if the record type inherits from either of those classes.
  */
 template <typename RecordT> class DBTable
 {
@@ -18,7 +21,7 @@ template <typename RecordT> class DBTable
     typedef typename RecordT::key_t key_t;
     typedef std::map<key_t, RecordT> map_t;
     typedef typename DBTable<RecordT>::map_t::size_type size_type;
-    DBTable();
+    DBTable(DBTable<Item> *sibling = nullptr);
     /**
      * @brief Adds a record to the table.
      * @param record
@@ -42,6 +45,7 @@ template <typename RecordT> class DBTable
     size_type remove(key_t primaryKey);
     std::string toString() const;
     map_t records;
+    DBTable<Item> *sibling;
 
   private:
     /**
@@ -59,19 +63,22 @@ template <typename RecordT> class DBTable
     std::queue<key_t> removedKeys;
 };
 
-template <typename RecordT> DBTable<RecordT>::DBTable() : nextKey(0), uniqueNames(true)
+template <typename RecordT>
+DBTable<RecordT>::DBTable(DBTable<Item> *sibling) : nextKey(0), uniqueNames(true), sibling(sibling)
 {
 }
 
 template <typename RecordT> bool DBTable<RecordT>::add(RecordT &record, bool allowRecycledKey)
 {
+    bool recordAdded = false;
+
     // Only use auto-incrementing logic on records that are AutoIncrementable
     if constexpr (std::is_base_of_v<AutoIncrementable, RecordT>)
     {
         // Prefers filling in gaps over making never-used keys.
         bool usingRecycledKey = allowRecycledKey && !removedKeys.empty();
         size_type primaryKey = usingRecycledKey ? removedKeys.front() : nextKey;
-        bool recordAdded = records.try_emplace(primaryKey, record).second;
+        recordAdded = records.try_emplace(primaryKey, record).second;
 
         if (recordAdded)
         {
@@ -88,15 +95,24 @@ template <typename RecordT> bool DBTable<RecordT>::add(RecordT &record, bool all
                 ++nextKey;
             }
         }
-
-        return recordAdded;
     }
     else
     {
         // The reason this is so much simpler is that, in this case, the
         // caller is responsible for making sure the key is not already in use.
-        return records.try_emplace(record.primaryKey, record).second;
+        recordAdded = records.try_emplace(record.primaryKey, record).second;
     }
+
+    // Only include this bit for record types that can be made aware of their parent tables.
+    if constexpr (std::is_base_of_v<DatabaseParentAwarable, RecordT>)
+    {
+        if (recordAdded)
+        {
+            record.parent = this;
+        }
+    }
+
+    return recordAdded;
 }
 
 template <typename RecordT> RecordT DBTable<RecordT>::at(const key_t &primaryKey) const
@@ -146,7 +162,7 @@ template <typename RecordT> std::string DBTable<RecordT>::toString() const
 {
     std::string accumulator = "";
 
-    for(const auto &pair : records)
+    for (const auto &pair : records)
     {
         accumulator += pair.second.toString() + "\n";
     }
