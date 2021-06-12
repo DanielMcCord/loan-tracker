@@ -90,20 +90,8 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
              self->db->loans.add(toAdd);
          }
      }},
-    {"list items",
-     [](CLI *self) {
-         for (const auto &[key, record] : self->db->items.records)
-         {
-             cout << record.toString() << endl;
-         }
-     }},
-    {"list loans",
-     [](CLI *self) {
-         for (const auto &[key, record] : self->db->loans.records)
-         {
-             cout << record.toString() << endl;
-         }
-     }},
+    {"list items", [](CLI *self) { cout << self->db->items.toString() << endl; }},
+    {"list loans", [](CLI *self) { cout << self->db->loans.toString() << endl; }},
     {"delete item", [](CLI *self) {}},
     {"save", [](CLI *self) {}},
     {"exit", [](CLI *self) { self->onExit(); }},
