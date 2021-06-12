@@ -31,12 +31,12 @@ string Loan::toString() const
     bool canGetItemInfo = parent != nullptr && parent->sibling != nullptr;
     string sep = " / ";
 
-    // I did some trickery to make this work.
+    // Due to a bug, this always gives the itemID, never the name.
     return to_string(primaryKey) + sep +
-           /*(canGetItemInfo
+           (canGetItemInfo
                 // Give the user-friendly item name if possible
-                ?*/ parent->sibling->records.at(itemID).name
-                // or fall back on the opaque itemIDif necessary.
-                /*: to_string(itemID))*/ +
+                ? parent->sibling->records.at(itemID).name
+                // or fall back on the itemID if necessary.
+                : to_string(itemID)) +
            sep + name;
 }

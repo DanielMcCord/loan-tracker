@@ -6,8 +6,9 @@ using namespace std;
 // If I was on clang-format 11, I'd probably use the BeforeLambdaBody rule.
 // Empty comments are to help clang-format do what I meant it to,
 // without having to turn it off or on.
-const map<string, function<void(CLI *)>> CLI::validCommands = { //
+const map<string, function<void(CLI *)>> CLI::validCommands = {
     {
+        // All of the lambdas below use self as a pointer to a CLI object.
         "create item",
         [](CLI *self) //
         {
@@ -100,7 +101,6 @@ const map<string, function<void(CLI *)>> CLI::validCommands = { //
         } //
     },
     {
-        //
         "list items",
         [](CLI *self) //
         {
@@ -108,7 +108,6 @@ const map<string, function<void(CLI *)>> CLI::validCommands = { //
         } //
     },
     {
-        //
         "list loans",
         [](CLI *self) //
         {
@@ -183,18 +182,32 @@ const map<string, function<void(CLI *)>> CLI::validCommands = { //
             }
         } //
     },
-    {"delete loan",
-     [](CLI *self) {
+    {
+        "delete loan",
+        [](CLI *self) //
+        {
 
-     }},
-    {"save", [](CLI *self) {}},
-    {"exit",
-     [](CLI *self) //
-     {
-         self->onExit(); //
-     } //
-},
-    {"help", [](CLI *self) { self->list_valid_commands() }}};
+        } //
+    },
+    {
+        "save", [](CLI *self) //
+        {} //
+    },
+    {
+        "exit",
+        [](CLI *self) //
+        {
+            self->onExit(); //
+        } //
+    },
+    {
+        "help",
+        [](CLI *self) //
+        {
+            self->list_valid_commands(); //
+        } //
+    } //
+};
 
 CLI::CLI(LoanSchema *db)
 {
