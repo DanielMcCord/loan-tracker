@@ -26,7 +26,13 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
          self->db->items.add(toAdd);
      }},
     {"create loan", [](CLI *self) {}},
-    {"list items", [](CLI *self) {}},
+    {"list items",
+     [](CLI *self) {
+         for (const auto &[key, record] : self->db->items.records)
+         {
+             cout << record.toString() << endl;
+         }
+     }},
     {"list loans", [](CLI *self) {}},
     {"delete item", [](CLI *self) {}},
     {"save", [](CLI *self) {}},
