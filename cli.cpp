@@ -1,5 +1,4 @@
 #include "cli.h"
-#include <cctype>
 
 using namespace std;
 
@@ -186,7 +185,47 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         "delete loan",
         [](CLI *self) //
         {
+            Loan::key_t toDelete = 0;
+            std::istringstream input("");
 
+            while (true)
+            {
+                std::istringstream input(self->prompt("Enter the ID of the loan to delete.\n > "));
+                input >> toDelete;
+                if (input.fail())
+                {
+                    cout << "Failed to get valid number from input. Try again." << endl;
+                }
+                else
+                {
+                    // Make sure the number is valid.
+                    if (toDelete < 0)
+                    {
+                        cout << "Number must be positive." << endl;
+                    }
+                    else if(self->db->loans.records.count(toDelete) < 1)
+                    {
+                        cout << "Loan ID not found." << endl;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            // Give the user a chance to change their mind.
+            cout << "You are about to delete the following loan:" << endl;
+            cout << "(Loan ID / Item ID / Borrower)" << endl;
+            cout << self->db->loans.at(toDelete).toString() << endl;
+            cout << "Are you sure you wish to proceed? (y/N)";
+            string confirmationAnswer = self->prompt();
+
+            if (confirmationAnswer.at(0) == 'y' || confirmationAnswer.at(0) == 'Y')
+            {
+                DBTable<Loan>::size_type removed(self->db->loans.remove(toDelete));
+                cout << (removed ? "Loan deleted." : "Delete failed.") << endl;
+            }
         } //
     },
     {
@@ -212,7 +251,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
     } //
 };
 
-CLI::CLI(LoanSchema *db)
+CLI::CLI(LoanSchema *db) : unsavedChanges(false)
 {
     this->db = db;
 }
@@ -221,11 +260,6 @@ void CLI::welcome() const
 {
     cout << "LoanIt - an item lending tracker." << endl;
     cout << "For help, type 'help' (without quotes) and press enter." << endl;
-    list_valid_commands();
-}
-
-void CLI::ioLoop()
-{
 }
 
 bool CLI::attempt_command(const string &command)

@@ -5,6 +5,7 @@
 #include <functional>
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <string>
 
 class CLI
@@ -18,16 +19,13 @@ class CLI
      * @param command The command that was used.
      */
 
-    /**
-     * @brief The I/O loop for the CLI.
-     */
-    void ioLoop();
     bool attempt_command(const std::string &command);
     void on_invalid_command(const std::string &command) const;
     void list_valid_commands() const;
     std::string prompt(const std::string &message = "") const;
     void onExit();
     LoanSchema *db;
+    bool unsavedChanges;
 
   private:
     /**

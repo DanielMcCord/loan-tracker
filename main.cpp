@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     {
         while (true)
         {
-            command = cli.prompt("\nType a command, and press ENTER.\n > ");
+            command = cli.prompt("\n > ");
             bool commandValid = cli.attempt_command(command);
 
             if (commandValid)
