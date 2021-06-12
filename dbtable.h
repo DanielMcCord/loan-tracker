@@ -40,9 +40,9 @@ template <typename RecordT> class DBTable
      * @return The number of records removed (0 or 1).
      */
     size_type remove(key_t primaryKey);
+    map_t records;
 
   private:
-    map_t records;
     /**
      * @brief Specifies whether the name field must be unique for each record in the table.
      */
