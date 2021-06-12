@@ -11,21 +11,85 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
          while (true)
          {
              itemName = self->prompt("Please enter a name for the new item\n > ");
-             if (itemName != "")
+
+             if (itemName == "")
+             {
+                 cout << "Item name cannot be empty." << endl;
+             }
+             else if (!self->db->items.findByName(itemName).isEmpty())
+             {
+                 cout << "An item with that name already exists. Choose a different name." << endl;
+             }
+             else
+             {
+                 break;
+             }
+         }
+
+         string itemDescription;
+         while (true)
+         {
+             itemDescription = self->prompt("Enter a description.\n > ");
+
+             if (itemDescription != "")
              {
                  break;
              }
              else
              {
-                 cout << "Item name cannot be empty.\n";
+                 cout << "Please add a one-line description of the item.\n";
              }
          }
 
-         string itemDescription = self->prompt("Enter a description (optional).\n > ");
          Item toAdd(itemName, itemDescription);
          self->db->items.add(toAdd);
      }},
-    {"create loan", [](CLI *self) {}},
+    {"create loan",
+     [](CLI *self) {
+         if (self->db->items.records.empty())
+         {
+         }
+         else
+         {
+             string borrowerName = "";
+
+             while (true)
+             {
+                 borrowerName = self->prompt("Please enter the name of the borrower.\n > ");
+                 if (borrowerName != "")
+                 {
+                     break;
+                 }
+                 else
+                 {
+                     cout << "Borrower name cannot be empty.\n";
+                 }
+             }
+
+             Item::key_t itemID = 0;
+
+             while (true)
+             {
+                 string itemName = self->prompt("What is being lent to them?\n > ");
+                 Item toLoan = self->db->items.findByName(itemName);
+
+                 // Make sure the item actually exists.
+                 if (!toLoan.isEmpty())
+                 {
+                     itemID = toLoan.primaryKey;
+                     break;
+                 }
+                 else
+                 {
+                     cout << "Item not found. Please choose one of the following:" << endl;
+                     CLI::validCommands.at("list items");
+                 }
+             }
+
+             Loan toAdd(itemID, borrowerName);
+             self->db->loans.add(toAdd);
+         }
+     }},
     {"list items",
      [](CLI *self) {
          for (const auto &[key, record] : self->db->items.records)
@@ -33,7 +97,13 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
              cout << record.toString() << endl;
          }
      }},
-    {"list loans", [](CLI *self) {}},
+    {"list loans",
+     [](CLI *self) {
+         for (const auto &[key, record] : self->db->loans.records)
+         {
+             cout << record.toString() << endl;
+         }
+     }},
     {"delete item", [](CLI *self) {}},
     {"save", [](CLI *self) {}},
     {"exit", [](CLI *self) { self->onExit(); }},
