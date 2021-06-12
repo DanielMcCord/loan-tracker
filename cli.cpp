@@ -47,7 +47,8 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
             }
 
             Item toAdd(itemName, itemDescription);
-            self->db->items.add(toAdd);
+            bool added = self->db->items.add(toAdd);
+            self->unsavedChanges = self->unsavedChanges || added;
         } //
     },
     {
@@ -95,7 +96,8 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
                 }
 
                 Loan toAdd(itemID, borrowerName);
-                self->db->loans.add(toAdd);
+                bool added = self->db->loans.add(toAdd);
+                self->unsavedChanges = self->unsavedChanges || added;
             }
         } //
     },
@@ -179,6 +181,8 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
                 cout << "Unknown error. Hic sunt dracones." << endl;
                 break;
             }
+
+            self->unsavedChanges = self->unsavedChanges || removed != 0;
         } //
     },
     {
@@ -203,7 +207,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
                     {
                         cout << "Number must be positive." << endl;
                     }
-                    else if(self->db->loans.records.count(toDelete) < 1)
+                    else if (self->db->loans.records.count(toDelete) < 1)
                     {
                         cout << "Loan ID not found." << endl;
                     }
@@ -224,7 +228,9 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
             if (confirmationAnswer.at(0) == 'y' || confirmationAnswer.at(0) == 'Y')
             {
                 DBTable<Loan>::size_type removed(self->db->loans.remove(toDelete));
-                cout << (removed ? "Loan deleted." : "Delete failed.") << endl;
+                cout << (removed > 0 ? "Loan deleted." : "Delete failed.") << endl;
+
+                self->unsavedChanges = self->unsavedChanges || removed != 0;
             }
         } //
     },
@@ -232,7 +238,8 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         "save",
         [](CLI *self) //
         {
-
+            bool saved = false;
+            self->unsavedChanges = self->unsavedChanges && !saved;
         } //
     },
     {
@@ -303,8 +310,11 @@ string CLI::prompt(const string &message) const
 
 void CLI::onExit()
 {
-    unsigned char shouldSave = prompt("\nSave changes? (y/N)\n > ").at(0);
-    if (shouldSave == 'y' || shouldSave == 'Y')
+    if (unsavedChanges)
     {
+        unsigned char shouldSave = prompt("\nSave changes? (y/N)\n > ").at(0);
+        if (shouldSave == 'y' || shouldSave == 'Y')
+        {
+        }
     }
 }
