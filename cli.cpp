@@ -10,7 +10,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
          string itemName = "";
          while (true)
          {
-             itemName = self->prompt("Please enter a name for the new item\n > ");
+             itemName = self->prompt("Please enter a name for the new item.\n > ");
 
              if (itemName == "")
              {
