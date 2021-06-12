@@ -148,7 +148,7 @@ template <typename RecordT> std::string DBTable<RecordT>::toString() const
 
     for(const auto &pair : records)
     {
-        accumulator += pair.second.toString();
+        accumulator += pair.second.toString() + "\n";
     }
 
     return accumulator;
