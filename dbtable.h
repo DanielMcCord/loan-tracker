@@ -40,6 +40,7 @@ template <typename RecordT> class DBTable
      * @return The number of records removed (0 or 1).
      */
     size_type remove(key_t primaryKey);
+    std::string toString() const;
     map_t records;
 
   private:
@@ -139,6 +140,18 @@ typename DBTable<RecordT>::size_type DBTable<RecordT>::remove(key_t primaryKey)
     {
         return records.erase(primaryKey);
     }
+}
+
+template <typename RecordT> std::string DBTable<RecordT>::toString() const
+{
+    std::string accumulator = "";
+
+    for(const auto &pair : records)
+    {
+        accumulator += pair.second.toString();
+    }
+
+    return accumulator;
 }
 
 #endif // DBTABLE_H
