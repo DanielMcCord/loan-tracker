@@ -14,7 +14,10 @@ class Loan : public AutoIncrementable
     Loan(const Item::key_t &itemID, const std::string &borrowerName);
     ~Loan();
     Item::key_t itemID;
-    std::string borrowerName;
+    /**
+     * @brief The name of the borrower.
+     */
+    std::string name;
     bool isEmpty() const override;
     std::string toString() const override;
 };

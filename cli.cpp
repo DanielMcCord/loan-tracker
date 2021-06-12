@@ -1,53 +1,22 @@
 #include "cli.h"
+#include <cctype>
 
 using namespace std;
 
-//clang-format off
-// If I was on ClangFormat 11, I'd probably use the BeforeLambdaBody rule.
-CLI::CLI() : validCommands({
-    {
-        "create item", []
-        {
-        }
-    },
-    {
-        "create loan", []
-        {
-        }
-    },
-    {
-        "list items", []
-        {
-        }
-    },
-    {
-        "list loans", []
-        {
-        }
-    },
-    {
-        "delete item", []
-        {
-        }
-    },
-    {
-        "save", []
-        {
-        }
-    },
-    {
-        "exit", []
-        {
-        }
-    }
-})
-{
-}
-// clang-format on
+// If I was on clang-format 11, I'd probably use the BeforeLambdaBody rule.
+const map<string, function<void(CLI *)>> CLI::validCommands = {
+    {"create item", [](CLI *self) {}},
+    {"create loan", [](CLI *self) {}},
+    {"list items", [](CLI *self) {}},
+    {"list loans", [](CLI *self) {}},
+    {"delete item", [](CLI *self) {}},
+    {"save", [](CLI *self) {}},
+    {"exit", [](CLI *self) { self->onExit(); }},
+    {"help", [](CLI *self) {}}};
 
-CLI::CLI(const map<string, function<void()>> &validCommands)
+CLI::CLI(LoanSchema *db)
 {
-    this->validCommands = validCommands;
+    this->db = db;
 }
 
 void CLI::welcome() const
@@ -57,11 +26,15 @@ void CLI::welcome() const
     list_valid_commands();
 }
 
+void CLI::ioLoop()
+{
+}
+
 bool CLI::attempt_command(const string &command)
 {
     if (validCommands.count(command) == 1)
     {
-        validCommands.at(command)();
+        validCommands.at(command)(this);
         return true;
     }
     else
@@ -94,4 +67,12 @@ string CLI::prompt(const string &message) const
     // Using std::ws to discard whitespace.
     getline(cin >> ws, input);
     return input;
+}
+
+void CLI::onExit()
+{
+    unsigned char shouldSave = prompt("\nSave changes? (y/N)\n > ").at(0);
+    if (shouldSave == 'y' || shouldSave == 'Y')
+    {
+    }
 }

@@ -98,18 +98,16 @@ template <typename RecordT> bool DBTable<RecordT>::add(RecordT &record, bool all
     }
 }
 
-template <typename RecordT>
-RecordT DBTable<RecordT>::at(const key_t &primaryKey) const
+template <typename RecordT> RecordT DBTable<RecordT>::at(const key_t &primaryKey) const
 {
     return records.at(primaryKey);
 }
 
-template <typename RecordT>
-RecordT DBTable<RecordT>::findByName(const std::string &name) const
+template <typename RecordT> RecordT DBTable<RecordT>::findByName(const std::string &name) const
 {
     RecordT result;
 
-    for(const auto &pair : records)
+    for (const auto &pair : records)
     {
         if (pair.second.name == name)
         {
