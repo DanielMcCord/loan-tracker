@@ -92,7 +92,71 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
      }},
     {"list items", [](CLI *self) { cout << self->db->items.toString() << endl; }},
     {"list loans", [](CLI *self) { cout << self->db->loans.toString() << endl; }},
-    {"delete item", [](CLI *self) {}},
+    {"delete item",
+     [](CLI *self) {
+         // Prompt user for item to delete.
+         string toDelete = "";
+         size_t itemID = 0;
+
+         // This loop goes until the item to delete is a valid one.
+         while (true)
+         {
+             toDelete = self->prompt("Choose an item to delete.\n > ");
+             // Check that the item exists.
+             size_t itemFound = 0;
+
+             // Need the ID for later.
+             itemID = 0;
+
+             for (const auto &itemRecord : self->db->items.records)
+             {
+                 ++itemFound;
+             }
+
+             if (itemFound < 1)
+             {
+                 cout << "There is no item with that name to delete." << endl;
+                 continue;
+             }
+
+             // Make sure no one is using it.
+             size_t inUse = 0;
+
+             for (const auto &loanRecord : self->db->loans.records)
+             {
+                 if (loanRecord.second.itemID == itemID)
+                 {
+                     ++inUse;
+                 }
+             }
+
+             if (inUse)
+             {
+                 cout << "Can't delete: would orphan " << inUse << " loan records." << endl;
+                 continue;
+             }
+
+             // We can delete it.
+             break;
+         }
+
+         DBTable<Item>::size_type removed = (self->db->items.remove(itemID));
+
+         // Tell the user what happened.
+         switch (removed)
+         {
+         case 0:
+             cout << "Failed to delete '" << toDelete << "' for an unknown reason." << endl;
+             break;
+         case 1:
+             cout << "Deletion completed successfuly." << endl;
+             break;
+         default:
+             // The most likely reason for this would be if a multimap was used.
+             cout << "Unknown error. Hic sunt dracones." << endl;
+             break;
+         }
+     }},
     {"save", [](CLI *self) {}},
     {"exit", [](CLI *self) { self->onExit(); }},
     {"help", [](CLI *self) {}}};
