@@ -188,7 +188,12 @@ const map<string, function<void(CLI *)>> CLI::validCommands = { //
 
      }},
     {"save", [](CLI *self) {}},
-    {"exit", [](CLI *self) { self->onExit(); }},
+    {"exit",
+     [](CLI *self) //
+     {
+         self->onExit(); //
+     } //
+},
     {"help", [](CLI *self) { self->list_valid_commands() }}};
 
 CLI::CLI(LoanSchema *db)
