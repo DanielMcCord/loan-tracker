@@ -50,6 +50,5 @@ int main(int argc, char **argv)
         }
     }
 
-    cli.onExit();
     return 0;
 }
