@@ -14,7 +14,8 @@ class Item : public AutoIncrementable
     key_t primaryKey;
     std::string name;
     std::string description;
-    std::string to_string() const;
+    bool isEmpty() const override;
+    std::string toString() const override;
 };
 
 #endif // ITEM_H

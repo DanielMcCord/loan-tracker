@@ -29,7 +29,7 @@ template <typename RecordT> class DBTable
     bool add(RecordT &record, bool allowRecycledKey = true);
     RecordT at(const key_t &primaryKey) const;
     /**
-     * @brief Returns the record with the given name.
+     * @brief Returns the record with the given name, or an empty record if none is found.
      * @param name
      * @return
      */
@@ -37,7 +37,7 @@ template <typename RecordT> class DBTable
     /**
      * @brief Removes a record from the table.
      * @param primaryKey
-     * @return
+     * @return The number of records removed (0 or 1).
      */
     size_type remove(key_t primaryKey);
 
@@ -107,13 +107,18 @@ RecordT DBTable<RecordT>::at(const key_t &primaryKey) const
 template <typename RecordT>
 RecordT DBTable<RecordT>::findByName(const std::string &name) const
 {
+    RecordT result;
+
     for(const auto &pair : records)
     {
         if (pair.second.name == name)
         {
-            return pair.second;
+            result = pair.second;
+            break;
         }
     }
+
+    return result;
 }
 
 template <typename RecordT>

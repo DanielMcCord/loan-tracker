@@ -16,7 +16,16 @@ Loan::~Loan()
 {
 }
 
-string Loan::to_string() const
+
+bool Loan::isEmpty() const
+{
+    Loan empty;
+    // Note: because empty.itemID refers to a usable itemID,
+    // itemID cannot prove emptiness on its own, although it can still disprove it.
+    return (itemID == empty.itemID && borrowerName == empty.borrowerName);
+}
+
+string Loan::toString() const
 {
     return "";
 }

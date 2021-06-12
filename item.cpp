@@ -12,7 +12,13 @@ Item::Item(const string &name, const string &description)
     this->description = description;
 }
 
-string Item::to_string() const
+bool Item::isEmpty() const
+{
+    Item empty;
+    return (name == empty.name && description == empty.description);
+}
+
+string Item::toString() const
 {
     return name + ": " + description;
 }
