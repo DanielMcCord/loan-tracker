@@ -5,7 +5,26 @@ using namespace std;
 
 // If I was on clang-format 11, I'd probably use the BeforeLambdaBody rule.
 const map<string, function<void(CLI *)>> CLI::validCommands = {
-    {"create item", [](CLI *self) {}},
+    {"create item",
+     [](CLI *self) {
+         string itemName = "";
+         while (true)
+         {
+             itemName = self->prompt("Please enter a name for the new item\n > ");
+             if (itemName != "")
+             {
+                 break;
+             }
+             else
+             {
+                 cout << "Item name cannot be empty.\n";
+             }
+         }
+
+         string itemDescription = self->prompt("Enter a description (optional).\n > ");
+         Item toAdd(itemName, itemDescription);
+         self->db->items.add(toAdd);
+     }},
     {"create loan", [](CLI *self) {}},
     {"list items", [](CLI *self) {}},
     {"list loans", [](CLI *self) {}},
