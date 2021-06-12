@@ -5,4 +5,4 @@ project(LoanIt LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(LoanIt main.cpp item.cpp loan.cpp record.cpp autoincrementable.cpp cli.cpp)
+add_executable(LoanIt main.cpp autoincrementable.cpp cli.cpp item.cpp loan.cpp loanschema.cpp record.cpp)
