@@ -22,10 +22,9 @@ class CLI
     bool attempt_command(const std::string &command);
     void on_invalid_command(const std::string &command) const;
     void list_valid_commands() const;
+    static void commandHint();
     std::string prompt(const std::string &message = "") const;
     void onExit();
-    void save();
-    void load();
     LoanSchema *db;
     bool unsavedChanges;
 

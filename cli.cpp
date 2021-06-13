@@ -254,7 +254,8 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         "help",
         [](CLI *self) // Display help information.
         {
-            self->list_valid_commands(); //
+            CLI::commandHint();
+            self->list_valid_commands();
         } // end of "help"
     } //
 };
@@ -300,6 +301,11 @@ void CLI::list_valid_commands() const
     }
 }
 
+void CLI::commandHint()
+{
+    cout << "Run with `-f FILEPATH` to load data from a file." << endl;
+}
+
 string CLI::prompt(const string &message) const
 {
     cout << message << flush;
@@ -322,14 +328,4 @@ void CLI::onExit()
     else
     {
     }
-}
-
-void CLI::save()
-{
-
-}
-
-void CLI::load()
-{
-
 }
