@@ -254,7 +254,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         "help",
         [](CLI *self) // Display help information.
         {
-            CLI::commandHint();
+            self->commandHint();
             self->list_valid_commands();
         } // end of "help"
     } //
