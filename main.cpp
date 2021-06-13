@@ -18,8 +18,16 @@ int main(int argc, char *argv[])
     if (argc >= 3 && strcmp(argv[1], "-f") == 0)
     {
         loadFilePath = argv[2];
-        string loadData = FileHandler::readTextFile(loadFilePath);
-        cout << "Loaded from file: " << loadFilePath << endl;
+
+        if (loadFilePath.empty())
+        {
+            cout << "Path empty - file not loaded." << endl;
+        }
+        else
+        {
+            string loadData = FileHandler::readTextFile(loadFilePath);
+            cout << "Loaded from file: " << loadFilePath << endl;
+        }
     }
     else
     {
