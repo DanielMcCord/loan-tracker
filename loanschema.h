@@ -14,6 +14,7 @@ class LoanSchema
     LoanSchema();
     DBTable<Item> items;
     DBTable<Loan> loans;
+    bool itemsAvailable() const;
 };
 
 #endif // LOANSCHEMA_H

@@ -55,8 +55,9 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         "create loan",
         [](CLI *self) // Interactively adds a loan to the database.
         {
-            if (self->db->items.records.empty())
+            if (!self->db->itemsAvailable())
             {
+                cout << "No items to lend - cannot create loan." << endl;
             }
             else
             {
