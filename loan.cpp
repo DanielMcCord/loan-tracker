@@ -11,6 +11,8 @@ Loan::Loan(const Item::key_t &itemID, const string &borrowerName)
     this->itemID = itemID;
     this->name = borrowerName;
     parent = nullptr;
+    time_t temp = time(nullptr);
+    timeCreated = ctime(&temp);
 }
 
 Loan::~Loan()
@@ -38,5 +40,5 @@ string Loan::toString() const
                 ? parent->sibling->records.at(itemID).name
                 // or fall back on the itemID if necessary.
                 : to_string(itemID)) +
-           sep + name;
+           sep + name + sep + timeCreated;
 }

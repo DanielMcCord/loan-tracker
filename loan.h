@@ -7,6 +7,7 @@
 #include "item.h"
 #include <cstddef> // for size_t
 #include <string>
+#include <ctime>
 
 class Loan : public AutoIncrementable
 {
@@ -20,6 +21,7 @@ class Loan : public AutoIncrementable
      */
     std::string name;
     DBTable<Loan> *parent;
+    std::string timeCreated;
     bool isEmpty() const override;
     std::string toString() const override;
 };
