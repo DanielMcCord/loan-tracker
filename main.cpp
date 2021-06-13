@@ -32,7 +32,26 @@ int main(int argc, char *argv[])
         else
         {
             string loadData = FileHandler::readTextFile(loadFilePath);
-            cout << "Loaded from file: " << loadFilePath << endl;
+
+            if (loadData.empty())
+            {
+                cout << "No data found. File may be empty, or you may lack sufficient permissions."
+                     << endl;
+            }
+            else
+            {
+                db = LoanSchema(loadData);
+
+                if (db.empty())
+                {
+                    cout << "Failed to load data. File may be corrupted or improperly formatted."
+                         << endl;
+                }
+                else
+                {
+                    cout << "Loaded from file: " << loadFilePath << endl;
+                }
+            }
         }
     }
     else

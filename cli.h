@@ -1,7 +1,9 @@
 #ifndef CLI_H
 #define CLI_H
 
+#include "filehandler.h"
 #include "loanschema.h"
+#include <filesystem>
 #include <functional>
 #include <iostream>
 #include <map>
@@ -24,7 +26,7 @@ class CLI
     void list_valid_commands() const;
     void commandHint();
     std::string prompt(const std::string &message = "") const;
-    void onExit();
+    void onExit(const std::filesystem::path defaultSavePath = std::filesystem::path());
     LoanSchema *db;
     bool unsavedChanges;
 

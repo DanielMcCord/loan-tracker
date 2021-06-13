@@ -315,7 +315,7 @@ string CLI::prompt(const string &message) const
     return input;
 }
 
-void CLI::onExit()
+void CLI::onExit(const filesystem::path defaultSavePath)
 {
     if (unsavedChanges)
     {
@@ -323,6 +323,20 @@ void CLI::onExit()
 
         if (shouldSave == 'y' || shouldSave == 'Y')
         {
+            cout << "Where would you like to save it? If you leave this blank, the file will "
+                 << ((defaultSavePath == "") ? "not be saved."
+                                             : "be saved to:\n" + defaultSavePath.string());
+
+            filesystem::path input = prompt("\n > ");
+            // Use the default if nothing was entered.
+            filesystem::path savePath = input.empty() ? defaultSavePath : input;
+
+            if (!savePath.empty())
+            {
+                string encodedData = this->db->encode();
+                FileHandler::writeTextFile(encodedData, savePath);
+                cout << "Data saved to " << savePath << endl;
+            }
         }
     }
     else

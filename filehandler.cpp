@@ -6,7 +6,6 @@ string FileHandler::readTextFile(const filesystem::path &source)
 {
     // Initialize the streams.
     ifstream input(source);
-    //stringstream accumulator(ios_base::app);
     string accumulator = "";
 
     // Put the input into the accumulator line by line.
@@ -16,4 +15,21 @@ string FileHandler::readTextFile(const filesystem::path &source)
     }
 
     return accumulator;
+}
+
+void FileHandler::writeTextFile(
+    const string &content, const filesystem::path &destination, bool clobber)
+{
+    ofstream output;
+
+    if (!clobber)
+    {
+        output = ofstream(destination, ios_base::app);
+    }
+    else
+    {
+        output = ofstream(destination);
+    }
+
+    output << content;
 }
