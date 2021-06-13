@@ -25,6 +25,10 @@ int main(int argc, char *argv[])
         {
             cout << "Path empty - file not loaded." << endl;
         }
+        else if (!filesystem::exists(loadFilePath))
+        {
+            cout << "File " << loadFilePath << " does not exist." << endl;
+        }
         else
         {
             string loadData = FileHandler::readTextFile(loadFilePath);
