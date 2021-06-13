@@ -12,6 +12,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    LoanSchema db;
+    CLI cli(&db);
     filesystem::path loadFilePath;
 
     // Check for optional command line flag to load a data file
@@ -32,13 +34,10 @@ int main(int argc, char *argv[])
     else
     {
         // Give the user a hint if they didn't use the feature.
-        CLI::commandHint();
+        cli.commandHint();
     }
 
-    LoanSchema db;
-    CLI cli(&db);
     cli.welcome();
-
     string command = "";
 
     while (command != "exit")
