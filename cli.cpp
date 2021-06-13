@@ -9,7 +9,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
     {
         // All of the lambdas below use self as a pointer to a CLI object.
         "create item",
-        [](CLI *self) //
+        [](CLI *self) // Interactively adds an item to the database.
         {
             string itemName = "";
             while (true)
@@ -49,11 +49,11 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
             Item toAdd(itemName, itemDescription);
             bool added = self->db->items.add(toAdd);
             self->unsavedChanges = self->unsavedChanges || added;
-        } //
+        } // end of "create item"
     },
     {
         "create loan",
-        [](CLI *self) //
+        [](CLI *self) // Interactively adds a loan to the database.
         {
             if (self->db->items.records.empty())
             {
@@ -99,25 +99,25 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
                 bool added = self->db->loans.add(toAdd);
                 self->unsavedChanges = self->unsavedChanges || added;
             }
-        } //
+        } // end of "create loan"
     },
     {
         "list items",
-        [](CLI *self) //
+        [](CLI *self) // Shows a list of all the items.
         {
             cout << self->db->items.toString() << endl; //
-        } //
+        } // end of "list items"
     },
     {
         "list loans",
-        [](CLI *self) //
+        [](CLI *self) // Shows a list of all the loans.
         {
             cout << self->db->loans.toString() << endl; //
-        } //
+        } // end of "list loans"
     },
     {
         "delete item",
-        [](CLI *self) //
+        [](CLI *self) // Interactively deletes an item from the database.
         {
             // Prompt user for item to delete.
             string toDelete = "";
@@ -183,11 +183,11 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
             }
 
             self->unsavedChanges = self->unsavedChanges || removed != 0;
-        } //
+        } // end of "delete item"
     },
     {
         "delete loan",
-        [](CLI *self) //
+        [](CLI *self) // Interactively deletes a loan from the database.
         {
             Loan::key_t toDelete = 0;
             std::istringstream input("");
@@ -232,29 +232,29 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
 
                 self->unsavedChanges = self->unsavedChanges || removed != 0;
             }
-        } //
+        } // end of "delete loan"
     },
     {
         "save",
-        [](CLI *self) //
+        [](CLI *self) // Save changes to a file.
         {
             bool saved = false;
             self->unsavedChanges = self->unsavedChanges && !saved;
-        } //
+        } // end of "save"
     },
     {
         "exit",
-        [](CLI *self) //
+        [](CLI *self) // Exit the application.
         {
             self->onExit(); //
-        } //
+        } // end of "exit"
     },
     {
         "help",
-        [](CLI *self) //
+        [](CLI *self) // Display help information.
         {
             self->list_valid_commands(); //
-        } //
+        } // end of "help"
     } //
 };
 

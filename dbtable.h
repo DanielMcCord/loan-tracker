@@ -12,7 +12,7 @@
 /**
  * A model of some of the features of a table in a relational database.
  * Recognizes AutoIncrementable and DatabaseParentAwarable, and will implement the
- * semantics accordingly if the record type inherits from either of those classes.
+ * relevant semantics if the record type inherits from either of those classes.
  */
 template <typename RecordT> class DBTable
 {
