@@ -32,7 +32,7 @@ template <typename RecordT> class DBTable
     bool add(RecordT &record, bool allowRecycledKey = true);
     RecordT at(const key_t &primaryKey) const;
     /**
-     * @brief Returns the record with the given name, or an empty record if none is found.
+     * @brief Returns a record with the given name, or an empty record if none is found.
      * @param name
      * @return
      */
