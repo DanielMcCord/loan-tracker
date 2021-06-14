@@ -49,10 +49,6 @@ template <typename RecordT> class DBTable
 
   private:
     /**
-     * @brief Specifies whether the name field must be unique for each record in the table.
-     */
-    bool uniqueNames;
-    /**
      * Used with auto-incrementable records only. Contains the value of the next key.
      * If records are not auto-incrementable, this value sits unused and is never incremeneted.
      */
@@ -64,7 +60,7 @@ template <typename RecordT> class DBTable
 };
 
 template <typename RecordT>
-DBTable<RecordT>::DBTable(DBTable<Item> *sibling) : nextKey(0), uniqueNames(true), sibling(sibling)
+DBTable<RecordT>::DBTable(DBTable<Item> *sibling) : nextKey(0), sibling(sibling)
 {
 }
 
