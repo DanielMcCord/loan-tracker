@@ -12,11 +12,12 @@ Item::Item(const string &name, const string &description) : primaryKey(0)
     this->description = description;
 }
 
-Item::Item(const string &serialized)
+Item::Item(const string &serialized) : Item()
 {
     const size_t FIELD_COUNT = 3;
     vector<string> data = deserialize(serialized);
 
+    // Only do this if we have enough data to fill the fields
     if (data.size() >= FIELD_COUNT)
     {
         istringstream keyStream(data.at(0));

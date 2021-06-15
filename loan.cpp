@@ -15,13 +15,15 @@ Loan::Loan(const Item::key_t &itemID, const string &borrowerName) : primaryKey(0
     timeCreated = timeWithNewline.substr(0, timeWithNewline.find_last_not_of('\n') + 1);
 }
 
-Loan::Loan(const string &serialized)
+Loan::Loan(const string &serialized) : Loan()
 {
     size_t FIELD_COUNT = 4;
     vector<string> data = deserialize(serialized);
 
+    // Only do this if we have enough data to fill the fields
     if (data.size() >= FIELD_COUNT)
     {
+        // Fill all fields using the deserialized data.
         istringstream primaryKeyStream(data.at(0));
         primaryKeyStream >> primaryKey;
         istringstream itemIDStream(data.at(1));
