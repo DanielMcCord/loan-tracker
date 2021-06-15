@@ -266,6 +266,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         [](CLI *self) // Save changes to a file.
         {
             bool saved = false;
+            self->onSave();
             self->unsavedChanges = self->unsavedChanges && !saved;
         } // end of "save"
     },
