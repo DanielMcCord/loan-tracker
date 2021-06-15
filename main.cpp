@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
         while (true)
         {
             command = cli.prompt("\n > ");
-            bool commandValid = cli.attempt_command(command);
+            bool commandValid = cli.attemptCommand(command);
 
             if (commandValid)
             {

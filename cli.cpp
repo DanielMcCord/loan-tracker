@@ -3,8 +3,6 @@
 using namespace std;
 
 // If I was on clang-format 11, I'd probably use the BeforeLambdaBody rule.
-// Empty comments are to help clang-format do what I meant it to,
-// without having to turn it off or on.
 const map<string, function<void(CLI *)>> CLI::validCommands = {
     {
         // All of the lambdas below use self as a pointer to a CLI object.
@@ -274,7 +272,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         "exit",
         [](CLI *self) // Exit the application.
         {
-            self->onExit(); //
+            self->onExit();
         } // end of "exit"
     },
     {
@@ -282,7 +280,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         [](CLI *self) // Display help information.
         {
             self->commandHint();
-            self->list_valid_commands();
+            self->listValidCommands();
         } // end of "help"
     } //
 };
@@ -298,7 +296,7 @@ void CLI::welcome() const
     cout << "For help, type 'help' (without quotes) and press enter." << endl;
 }
 
-bool CLI::attempt_command(const string &command)
+bool CLI::attemptCommand(const string &command)
 {
     if (validCommands.count(command) == 1)
     {
@@ -307,18 +305,18 @@ bool CLI::attempt_command(const string &command)
     }
     else
     {
-        on_invalid_command(command);
+        onInvalidCommand(command);
         return false;
     }
 }
 
-void CLI::on_invalid_command(const string &command) const
+void CLI::onInvalidCommand(const string &command) const
 {
     cout << "Unrecognized command '" << command << "'." << endl;
-    list_valid_commands();
+    listValidCommands();
 }
 
-void CLI::list_valid_commands() const
+void CLI::listValidCommands() const
 {
     cout << "The following commands are available:" << endl;
 

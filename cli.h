@@ -21,9 +21,9 @@ class CLI
      * @param command The command that was used.
      */
 
-    bool attempt_command(const std::string &command);
-    void on_invalid_command(const std::string &command) const;
-    void list_valid_commands() const;
+    bool attemptCommand(const std::string &command);
+    void onInvalidCommand(const std::string &command) const;
+    void listValidCommands() const;
     void commandHint();
     std::string prompt(const std::string &message = "") const;
     void onExit(const std::filesystem::path defaultSavePath = std::filesystem::path());
