@@ -336,9 +336,9 @@ void CLI::commandHint()
 string CLI::prompt(const string &message) const
 {
     cout << message << flush;
-    string input;
-    getline(cin, input);
-    return input;
+    string userInput;
+    getline(cin, userInput);
+    return userInput;
 }
 
 void CLI::onExit(const filesystem::path defaultSavePath)
@@ -358,9 +358,9 @@ void CLI::onSave(const filesystem::path defaultSavePath)
                  << ((defaultSavePath == "") ? "not be saved."
                                              : "be saved to:\n" + defaultSavePath.string());
 
-            filesystem::path input = prompt("\n > ");
+            filesystem::path inputPath = prompt("\n > ");
             // Use the default if nothing was entered.
-            filesystem::path savePath = input.empty() ? defaultSavePath : input;
+            filesystem::path savePath = inputPath.empty() ? defaultSavePath : inputPath;
 
             if (!savePath.empty())
             {
