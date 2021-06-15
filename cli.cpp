@@ -216,12 +216,13 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         [](CLI *self) // Interactively deletes a loan from the database.
         {
             Loan::key_t toDelete = 0;
-            std::istringstream input("");
+            istringstream input("");
 
             while (true)
             {
-                std::istringstream input(self->prompt("Enter the ID of the loan to delete.\n > "));
+                istringstream input(self->prompt("Enter the ID of the loan to delete.\n > "));
                 input >> toDelete;
+
                 if (input.fail())
                 {
                     cout << "Failed to get valid number from input. Try again." << endl;
@@ -247,7 +248,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
             // Give the user a chance to change their mind.
             cout << "You are about to delete the following loan:" << endl;
             cout << "Loan ID|Item ID|Borrower|Created On" << endl;
-            cout << self->db->loans.at(toDelete).toString() << endl;
+            cout << self->db->loans.records.at(toDelete).toString() << endl;
             cout << "Are you sure you wish to proceed? (y/N)";
             string confirmationAnswer = self->prompt();
 
@@ -282,7 +283,61 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
             self->commandHint();
             self->listValidCommands();
         } // end of "help"
-    } //
+    },
+    {
+        "edit item",
+        [](CLI *self) // Change details of item
+        {
+            Item::key_t toEdit = 0;
+            string input("");
+
+            // Loop until user enters a valid item.
+            while (true)
+            {
+                input = self->prompt("Enter name of item to edit.\n > ");
+
+                if (input.empty())
+                {
+                    cout << "Name cannot be empty." << endl;
+                }
+                else
+                {
+                    Item temp = self->db->items.findByName(input);
+
+                    if (temp.isEmpty())
+                    {
+                        cout << "Item not found." << endl;
+                    }
+                    else
+                    {
+                        toEdit = temp.primaryKey;
+                        break;
+                    }
+                }
+            }
+
+            cout << "Enter a new name, or press enter to keep existing name." << endl;
+            string newName = self->prompt(" > ");
+
+            if (!newName.empty())
+            {
+                self->db->items.records.at(toEdit).name = newName;
+                cout << "Name updated." << endl;
+            }
+
+            cout << "The current description is:" << endl
+                 << self->db->items.records.at(toEdit).description << endl
+                 << "Enter a new description, or press enter to keep the existing one." << endl;
+
+            string newDescription = self->prompt(" > ");
+
+            if (!newDescription.empty())
+            {
+                self->db->items.records.at(toEdit).description = newDescription;
+                cout << "Description updated." << endl;
+            }
+        } // end of "edit item"
+    } // end of lambda map
 };
 
 CLI::CLI(LoanSchema *db) : unsavedChanges(false)
