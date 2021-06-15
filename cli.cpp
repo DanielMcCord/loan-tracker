@@ -106,14 +106,38 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         "list items",
         [](CLI *self) // Shows a list of all the items.
         {
-            cout << self->db->items.toString() << endl; //
+            string delimStr;
+            delimStr += Item().fieldDelimiter;
+            string legend = "Item ID" + delimStr + "Name" + delimStr + "Description";
+            cout << legend << endl;
+
+            for (size_t i = 0; i < legend.size(); ++i)
+            {
+                cout << "-";
+            }
+
+            cout << endl;
+            cout << self->db->items.toString() << endl;
         } // end of "list items"
     },
     {
         "list loans",
         [](CLI *self) // Shows a list of all the loans.
         {
-            cout << self->db->loans.toString() << endl; //
+            string delimStr;
+            delimStr += Loan().fieldDelimiter;
+            string legend =
+                "Loan ID" + delimStr + "Item ID" + delimStr + "Borrower" + delimStr + "Created On";
+
+            cout << legend << endl;
+
+            for (size_t i = 0; i < legend.size(); ++i)
+            {
+                cout << "-";
+            }
+
+            cout << endl;
+            cout << self->db->loans.toString() << endl;
         } // end of "list loans"
     },
     {
