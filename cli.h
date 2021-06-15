@@ -27,6 +27,7 @@ class CLI
     void commandHint();
     std::string prompt(const std::string &message = "") const;
     void onExit(const std::filesystem::path defaultSavePath = std::filesystem::path());
+    void onSave(const std::filesystem::path defaultSavePath = std::filesystem::path());
     LoanSchema *db;
     bool unsavedChanges;
 

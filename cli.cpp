@@ -319,6 +319,11 @@ string CLI::prompt(const string &message) const
 
 void CLI::onExit(const filesystem::path defaultSavePath)
 {
+    onSave(defaultSavePath);
+}
+
+void CLI::onSave(const filesystem::path defaultSavePath)
+{
     if (unsavedChanges)
     {
         unsigned char shouldSave = prompt("\nSave changes? (y/N)\n > ").at(0);
@@ -343,5 +348,6 @@ void CLI::onExit(const filesystem::path defaultSavePath)
     }
     else
     {
+        cout << "No changes to save." << endl;
     }
 }
