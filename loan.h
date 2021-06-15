@@ -7,6 +7,7 @@
 #include "item.h"
 #include <cstddef>
 #include <ctime> // used when setting timeCreated
+#include <sstream>
 #include <string>
 #include <vector>
 

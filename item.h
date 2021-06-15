@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <sstream>
 
 class Item : public AutoIncrementable
 {

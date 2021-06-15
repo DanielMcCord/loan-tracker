@@ -19,7 +19,9 @@ Item::Item(const string &serialized) : Item()
 
     if (data.size() >= FIELD_COUNT)
     {
-        primaryKey = stoi(data.at(0));
+        istringstream keyStream(data.at(0));
+        keyStream >> primaryKey;
+        //primaryKey = stoi(data.at(0));
         name = data.at(1);
         description = data.at(2);
     }

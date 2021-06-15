@@ -22,8 +22,10 @@ Loan::Loan(const string &serialized)
 
     if (data.size() >= FIELD_COUNT)
     {
-        primaryKey = stoi(data.at(0));
-        itemID = stoi(data.at(1));
+        istringstream primaryKeyStream(data.at(0));
+        primaryKeyStream >> primaryKey;
+        istringstream itemIDStream(data.at(1));
+        itemIDStream >> itemID;
         name = data.at(2);
         timeCreated = data.at(3);
     }

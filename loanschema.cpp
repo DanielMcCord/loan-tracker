@@ -9,10 +9,10 @@ LoanSchema::LoanSchema()
 LoanSchema::LoanSchema(const string &serialized)
 {
     auto itemsStrStart = serialized.find(this->itemsStartLabel) + itemsStartLabel.length();
-    auto itemsStrLength = itemsStrStart - serialized.find(this->itemsEndLabel);
-    auto loansStrStart = serialized.find(this->loansStartLabel) + loansStartLabel.length();
-    auto loansStrLength = loansStrStart - serialized.find(this->loansEndLabel);
+    auto itemsStrLength = serialized.find(this->itemsEndLabel) - itemsStrStart;
     string itemsStr = serialized.substr(itemsStrStart, itemsStrLength);
+    auto loansStrStart = serialized.find(this->loansStartLabel) + loansStartLabel.length();
+    auto loansStrLength = serialized.find(this->loansEndLabel) - loansStrStart;
     string loansStr = serialized.substr(loansStrStart, loansStrLength);
     items = DBTable<Item>(itemsStr);
     loans = DBTable<Loan>(loansStr);

@@ -63,13 +63,13 @@ template <typename RecordT> DBTable<RecordT>::DBTable() : nextKey(0)
 }
 
 template <typename RecordT>
-DBTable<RecordT>::DBTable(const std::string &serialized) : DBTable<RecordT>::DBTable()
+DBTable<RecordT>::DBTable(const std::string &serialized) : DBTable()
 {
     std::istringstream tableStringStream;
     tableStringStream.str(serialized);
 
     // Iterate through the records, incrementing nextKey and rebuilding removedKeys as needed.
-    for (std::string recordStr; getline(tableStringStream, recordStr, RecordT().fieldDelimiter);)
+    for (std::string recordStr; getline(tableStringStream, recordStr, '\n');)
     {
         // Check if the record type auto-increments.
         if constexpr (std::is_base_of_v<AutoIncrementable, RecordT>)
