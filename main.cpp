@@ -74,10 +74,6 @@ int main(int argc, char *argv[])
             {
                 break;
             }
-            else
-            {
-                cli.on_invalid_command(command);
-            }
         }
     }
 
