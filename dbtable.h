@@ -120,7 +120,7 @@ template <typename RecordT> bool DBTable<RecordT>::add(RecordT &record, bool all
         if (recordAdded)
         {
             // Update the record so it knows what its own key is.
-            record.primaryKey = primaryKey;
+            records.at(primaryKey).primaryKey = primaryKey;
 
             // Make sure we don't try to use the same key next time.
             if (usingRecycledKey)

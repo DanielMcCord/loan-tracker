@@ -149,54 +149,76 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         "delete item",
         [](CLI *self) // Interactively deletes an item from the database.
         {
-            // Prompt user for item to delete.
-            string toDelete = "";
-            size_t itemID = 0;
-
-            // This loop goes until the item to delete is a valid one.
-            while (true)
-            {
-                toDelete = self->prompt("Choose an item to delete.\n > ");
-                // Check that the item exists.
-                size_t itemFound = 0;
-
-                // Need the ID for later.
-                itemID = 0;
-
-                for (const auto &pair : self->db->items.records)
-                {
-                    if (pair.second.name == toDelete)
-                    {
-                        ++itemFound;
-                    }
-                }
-
-                if (itemFound < 1)
-                {
-                    cout << "There is no item with that name to delete." << endl;
-                    continue;
-                }
-
-                // Make sure no one is using it.
-                size_t inUse = 0;
+            /*
+             * Checks if an item is involved in any loans, which would prevent its deletion.
+             * This function is not needed outside this scope, which is why I made it a lambda.
+             */
+            auto inUse = [&](Item::key_t itemID) {
+                size_t users = 0;
 
                 for (const auto &loanRecord : self->db->loans.records)
                 {
                     if (loanRecord.second.itemID == itemID)
                     {
-                        ++inUse;
+                        ++users;
                     }
                 }
 
-                if (inUse)
+                return users;
+            };
+
+            bool anyDeletableItems = false;
+
+            for (const auto &pair : self->db->items.records)
+            {
+                if (!inUse(pair.first))
                 {
-                    cout << "Can't delete: would orphan " << inUse << " loan records." << endl;
+                    anyDeletableItems = true;
+                    break;
+                }
+            }
+
+            if (!anyDeletableItems)
+            {
+                cout << "There are currently no items that can be deleted." << endl;
+                return;
+            }
+
+            // Prompt user for item to delete.
+            string nameofDeleteTarget = "";
+            size_t itemID = 0;
+
+            // Loop until user enters either a valid item, or nothing.
+            do
+            {
+                cout << "Enter the name of the item to delete, or press enter without no input to "
+                        "cancel."
+                     << endl;
+
+                nameofDeleteTarget = self->prompt(" > ");
+                // Check that the item exists.
+                Item target = self->db->items.findByName(nameofDeleteTarget);
+
+                if (target.isEmpty())
+                {
+                    cout << "There is no item with that name to delete." << endl;
+                    continue;
+                }
+
+                // Need the ID for later.
+                itemID = target.primaryKey;
+
+                size_t count = inUse(itemID);
+
+                if (count > 0)
+                {
+                    cout << "Can't delete: would orphan " << count << " loan records." << endl;
                     continue;
                 }
 
                 // We can delete it.
                 break;
-            }
+            } while (nameofDeleteTarget != "");
 
             DBTable<Item>::size_type removed = (self->db->items.remove(itemID));
 
@@ -204,13 +226,15 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
             switch (removed)
             {
             case 0:
-                cout << "Failed to delete '" << toDelete << "' for an unknown reason." << endl;
+                cout << "Failed to delete '" << nameofDeleteTarget << "' for an unknown reason."
+                     << endl;
+
                 break;
             case 1:
                 cout << "Deletion completed successfuly." << endl;
                 break;
             default:
-                // The most likely reason for this would be if a multimap was used.
+                // If this happens, you were probably using a multimap with duplicate keys.
                 cout << "Unknown error. Hic sunt dracones." << endl;
                 break;
             }
@@ -254,16 +278,22 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
 
             // Give the user a chance to change their mind.
             cout << "You are about to delete the following loan:" << endl;
-            cout << "Loan ID|Item ID|Borrower|Created On" << endl;
+            string legend = "Loan ID|Item ID|Borrower|Created On";
+            cout << legend << endl << string(legend.size(), '-') << endl;
             cout << self->db->loans.records.at(toDelete).toString() << endl;
-            cout << "Are you sure you wish to proceed? (y/N)";
-            string confirmationAnswer = self->prompt();
+            cout << "Are you sure you wish to proceed? (y/N)" << endl;
+            string confirmationAnswer = self->prompt(" > ");
 
-            if (confirmationAnswer.at(0) == 'y' || confirmationAnswer.at(0) == 'Y')
+            if (!confirmationAnswer.empty() &&
+                (confirmationAnswer.at(0) == 'y' || confirmationAnswer.at(0) == 'Y'))
             {
                 DBTable<Loan>::size_type removed(self->db->loans.remove(toDelete));
                 cout << (removed > 0 ? "Loan deleted." : "Delete failed.") << endl;
                 self->unsavedChanges = self->unsavedChanges || removed != 0;
+            }
+            else
+            {
+                cout << "Action cancelled." << endl;
             }
         } // end of "delete loan"
     },
