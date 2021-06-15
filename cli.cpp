@@ -90,8 +90,13 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
                     }
                     else
                     {
-                        cout << "Item not found. Please choose one of the following:" << endl;
-                        CLI::validCommands.at("list items");
+                        cout << "Item '" << itemName
+                             << "' not found. Please choose one of the following:" << endl;
+
+                        for (const auto &pair : self->db->items.records)
+                        {
+                            cout << "'" << pair.second.name << "'" << endl;
+                        }
                     }
                 }
 
