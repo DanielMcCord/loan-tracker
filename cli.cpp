@@ -46,6 +46,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
 
             Item toAdd(itemName, itemDescription);
             bool added = self->db->items.add(toAdd);
+            cout << (added ? "Item created." : "Failed to create item.") << endl;
             self->unsavedChanges = self->unsavedChanges || added;
         } // end of "create item"
     },
@@ -96,6 +97,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
 
                 Loan toAdd(itemID, borrowerName);
                 bool added = self->db->loans.add(toAdd);
+                cout << (added ? "Loan created." : "Failed to create loan.") << endl;
                 self->unsavedChanges = self->unsavedChanges || added;
             }
         } // end of "create loan"
@@ -256,7 +258,6 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
             {
                 DBTable<Loan>::size_type removed(self->db->loans.remove(toDelete));
                 cout << (removed > 0 ? "Loan deleted." : "Delete failed.") << endl;
-
                 self->unsavedChanges = self->unsavedChanges || removed != 0;
             }
         } // end of "delete loan"
@@ -275,6 +276,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         [](CLI *self) // Exit the application.
         {
             self->onExit();
+            cout << "Exiting." << endl;
         } // end of "exit"
     },
     {
@@ -408,7 +410,7 @@ void CLI::onSave(const filesystem::path defaultSavePath)
 
         if (shouldSave == 'y' || shouldSave == 'Y')
         {
-            cout << "Where would you like to save it? If you leave this blank, the file will "
+            cout << "Where would you like to save the data? If you leave this blank, the file will "
                  << ((defaultSavePath == "") ? "not be saved."
                                              : "be saved to:\n" + defaultSavePath.string());
 
@@ -421,6 +423,10 @@ void CLI::onSave(const filesystem::path defaultSavePath)
                 string encodedData = this->db->serialize();
                 FileHandler::writeTextFile(encodedData, savePath);
                 cout << "Data saved to " << savePath << endl;
+            }
+            else
+            {
+                cout << "Changes not saved." << endl;
             }
         }
     }
