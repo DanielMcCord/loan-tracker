@@ -6,7 +6,7 @@ Loan::Loan() : Loan::Loan(0, "")
 {
 }
 
-Loan::Loan(const Item::key_t &itemID, const string &borrowerName)
+Loan::Loan(const Item::key_t &itemID, const string &borrowerName) : primaryKey(0)
 {
     this->itemID = itemID;
     this->name = borrowerName;

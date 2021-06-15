@@ -6,13 +6,13 @@ Item::Item() : Item("", "")
 {
 }
 
-Item::Item(const string &name, const string &description)
+Item::Item(const string &name, const string &description) : primaryKey(0)
 {
     this->name = name;
     this->description = description;
 }
 
-Item::Item(const string &serialized) : Item()
+Item::Item(const string &serialized)
 {
     const size_t FIELD_COUNT = 3;
     vector<string> data = deserialize(serialized);
@@ -21,7 +21,6 @@ Item::Item(const string &serialized) : Item()
     {
         istringstream keyStream(data.at(0));
         keyStream >> primaryKey;
-        //primaryKey = stoi(data.at(0));
         name = data.at(1);
         description = data.at(2);
     }

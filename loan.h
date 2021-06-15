@@ -18,6 +18,7 @@ class Loan : public AutoIncrementable
     Loan(const Item::key_t &itemID, const std::string &borrowerName);
     Loan(const std::string &serialized);
     ~Loan();
+    key_t primaryKey;
     Item::key_t itemID;
     /**
      * @brief The name of the borrower.

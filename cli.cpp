@@ -248,7 +248,7 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
 
             // Give the user a chance to change their mind.
             cout << "You are about to delete the following loan:" << endl;
-            cout << "(Loan ID / Item ID / Borrower)" << endl;
+            cout << "Loan ID|Item ID|Borrower|Created On" << endl;
             cout << self->db->loans.at(toDelete).toString() << endl;
             cout << "Are you sure you wish to proceed? (y/N)";
             string confirmationAnswer = self->prompt();
