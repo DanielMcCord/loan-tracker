@@ -10,9 +10,23 @@ Loan::Loan(const Item::key_t &itemID, const string &borrowerName)
 {
     this->itemID = itemID;
     this->name = borrowerName;
-    parent = nullptr;
     time_t temp = time(nullptr);
-    timeCreated = ctime(&temp);
+    string timeWithNewline = ctime(&temp);
+    timeCreated = timeWithNewline.substr(0, timeWithNewline.find_last_not_of('\n') + 1);
+}
+
+Loan::Loan(const string &serialized)
+{
+    size_t FIELD_COUNT = 4;
+    vector<string> data = deserialize(serialized);
+
+    if (data.size() >= FIELD_COUNT)
+    {
+        primaryKey = stoi(data.at(0));
+        itemID = stoi(data.at(1));
+        name = data.at(2);
+        timeCreated = data.at(3);
+    }
 }
 
 Loan::~Loan()
@@ -29,16 +43,6 @@ bool Loan::isEmpty() const
 
 string Loan::toString() const
 {
-    // To find info about its item, the loan needs to be able to dereference both of these pointers.
-    bool canGetItemInfo = parent != nullptr && parent->sibling != nullptr;
-    string sep = " / ";
-
-    // Due to a bug, this always gives the itemID, never the name.
-    return to_string(primaryKey) + sep +
-           (canGetItemInfo
-                // Give the user-friendly item name if possible
-                ? parent->sibling->records.at(itemID).name
-                // or fall back on the itemID if necessary.
-                : to_string(itemID)) +
-           sep + name + sep + timeCreated;
+    return to_string(primaryKey) + fieldDelimiter + to_string(itemID) + fieldDelimiter + name +
+           fieldDelimiter + timeCreated;
 }

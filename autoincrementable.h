@@ -2,7 +2,7 @@
 #define AUTOINCREMENTABLE_H
 
 #include "record.h"
-#include <cstddef>
+#include <cstddef> // size_t
 
 class AutoIncrementable : public Record
 {

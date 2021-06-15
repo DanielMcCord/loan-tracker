@@ -2,7 +2,6 @@
 #define DBTABLE_H
 
 #include "autoincrementable.h"
-#include "databaseparentawarable.h"
 #include "item.h"
 #include <map>
 #include <queue>
@@ -21,7 +20,8 @@ template <typename RecordT> class DBTable
     typedef typename RecordT::key_t key_t;
     typedef std::map<key_t, RecordT> map_t;
     typedef typename DBTable<RecordT>::map_t::size_type size_type;
-    DBTable(DBTable<Item> *sibling = nullptr);
+    DBTable();
+    DBTable(const std::string &serialized);
     /**
      * @brief Adds a record to the table.
      * @param record
@@ -45,7 +45,6 @@ template <typename RecordT> class DBTable
     size_type remove(key_t primaryKey);
     std::string toString() const;
     map_t records;
-    DBTable<Item> *sibling;
 
   private:
     /**
@@ -59,9 +58,52 @@ template <typename RecordT> class DBTable
     std::queue<key_t> removedKeys;
 };
 
-template <typename RecordT>
-DBTable<RecordT>::DBTable(DBTable<Item> *sibling) : nextKey(0), sibling(sibling)
+template <typename RecordT> DBTable<RecordT>::DBTable() : nextKey(0)
 {
+}
+
+template <typename RecordT>
+DBTable<RecordT>::DBTable(const std::string &serialized) : DBTable<RecordT>::DBTable()
+{
+    std::istringstream tableStringStream;
+    tableStringStream.str(serialized);
+
+    // Iterate through the records, incrementing nextKey and rebuilding removedKeys as needed.
+    for (std::string recordStr; getline(tableStringStream, recordStr, RecordT().fieldDelimiter);)
+    {
+        // Check if the record type auto-increments.
+        if constexpr (std::is_base_of_v<AutoIncrementable, RecordT>)
+        {
+            std::istringstream recordStringStream;
+            std::string keyStr;
+            size_type key;
+
+            if (getline(recordStringStream, keyStr, RecordT().fieldDelimiter))
+            {
+                // Using a stream to allow conversion to size_type.
+                std::istringstream keyStringStream(keyStr);
+                keyStringStream >> key;
+
+                // Keep going until we get past any removed keys.
+                while (nextKey < key)
+                {
+                    // Since the key is missing, mark it as removed.
+                    removedKeys.push(nextKey);
+                    ++nextKey;
+                }
+            }
+        }
+
+        RecordT record(recordStr);
+        // Using (allowRecycledKey = false) in this call prevents key invalidation.
+        add(record, false);
+
+        // Can't put this in the iteration expression of the for loop because of the constexpr
+        if constexpr (std::is_base_of_v<AutoIncrementable, RecordT>)
+        {
+            ++nextKey;
+        }
+    }
 }
 
 template <typename RecordT> bool DBTable<RecordT>::add(RecordT &record, bool allowRecycledKey)
@@ -97,15 +139,6 @@ template <typename RecordT> bool DBTable<RecordT>::add(RecordT &record, bool all
         // The reason this is so much simpler is that, in this case, the
         // caller is responsible for making sure the key is not already in use.
         recordAdded = records.try_emplace(record.primaryKey, record).second;
-    }
-
-    // Only include this bit for record types that can be made aware of their parent tables.
-    if constexpr (std::is_base_of_v<DatabaseParentAwarable, RecordT>)
-    {
-        if (recordAdded)
-        {
-            record.parent = this;
-        }
     }
 
     return recordAdded;

@@ -5,22 +5,23 @@
 #include "autoincrementable.h"
 #include "dbtable.h"
 #include "item.h"
-#include <cstddef> // for size_t
+#include <cstddef>
+#include <ctime> // used when setting timeCreated
 #include <string>
-#include <ctime>
+#include <vector>
 
 class Loan : public AutoIncrementable
 {
   public:
     Loan();
     Loan(const Item::key_t &itemID, const std::string &borrowerName);
+    Loan(const std::string &serialized);
     ~Loan();
     Item::key_t itemID;
     /**
      * @brief The name of the borrower.
      */
     std::string name;
-    DBTable<Loan> *parent;
     std::string timeCreated;
     bool isEmpty() const override;
     std::string toString() const override;

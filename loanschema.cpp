@@ -2,18 +2,26 @@
 
 using namespace std;
 
-LoanSchema::LoanSchema() : loans(&(this->items))
+LoanSchema::LoanSchema()
 {
 }
 
-LoanSchema::LoanSchema(const string &encoded)
+LoanSchema::LoanSchema(const string &serialized)
 {
-    // TODO: write decoding logic
+    auto itemsStrStart = serialized.find(this->itemsStartLabel) + itemsStartLabel.length();
+    auto itemsStrLength = itemsStrStart - serialized.find(this->itemsEndLabel);
+    auto loansStrStart = serialized.find(this->loansStartLabel) + loansStartLabel.length();
+    auto loansStrLength = loansStrStart - serialized.find(this->loansEndLabel);
+    string itemsStr = serialized.substr(itemsStrStart, itemsStrLength);
+    string loansStr = serialized.substr(loansStrStart, loansStrLength);
+    items = DBTable<Item>(itemsStr);
+    loans = DBTable<Loan>(loansStr);
 }
 
-string LoanSchema::encode() const
+string LoanSchema::serialize() const
 {
-    // TODO: write encoding logic
+    return itemsStartLabel + items.toString() + itemsEndLabel + loansStartLabel + loans.toString() +
+           loansEndLabel;
 }
 
 bool LoanSchema::itemsAvailable() const

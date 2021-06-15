@@ -134,9 +134,12 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
                 // Need the ID for later.
                 itemID = 0;
 
-                for (const auto &itemRecord : self->db->items.records)
+                for (const auto &pair : self->db->items.records)
                 {
-                    ++itemFound;
+                    if (pair.second.name == toDelete)
+                    {
+                        ++itemFound;
+                    }
                 }
 
                 if (itemFound < 1)
@@ -332,7 +335,7 @@ void CLI::onExit(const filesystem::path defaultSavePath)
 
             if (!savePath.empty())
             {
-                string encodedData = this->db->encode();
+                string encodedData = this->db->serialize();
                 FileHandler::writeTextFile(encodedData, savePath);
                 cout << "Data saved to " << savePath << endl;
             }
