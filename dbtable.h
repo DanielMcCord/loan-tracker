@@ -30,7 +30,6 @@ template <typename RecordT> class DBTable
      * @return Whether the action was successful.
      */
     bool add(RecordT &record, bool allowRecycledKey = true);
-    RecordT at(const key_t &primaryKey) const;
     /**
      * @brief Returns a record with the given name, or an empty record if none is found.
      * @param name
@@ -142,11 +141,6 @@ template <typename RecordT> bool DBTable<RecordT>::add(RecordT &record, bool all
     }
 
     return recordAdded;
-}
-
-template <typename RecordT> RecordT DBTable<RecordT>::at(const key_t &primaryKey) const
-{
-    return records.at(primaryKey);
 }
 
 template <typename RecordT> RecordT DBTable<RecordT>::findByName(const std::string &name) const
