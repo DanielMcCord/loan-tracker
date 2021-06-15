@@ -111,38 +111,34 @@ const map<string, function<void(CLI *)>> CLI::validCommands = {
         "list items",
         [](CLI *self) // Shows a list of all the items.
         {
-            string delimStr;
-            delimStr += Item().fieldDelimiter;
+            string delimStr = "\t\t";
             string legend = "Item ID" + delimStr + "Name" + delimStr + "Description";
-            cout << legend << endl;
+            cout << legend << endl << string(legend.size(), ' ') << endl;
 
-            for (size_t i = 0; i < legend.size(); ++i)
+            // Not using toString because it isn't user-friendly enough.
+            for (const auto &pair : self->db->items.records)
             {
-                cout << "-";
+                cout << pair.first << delimStr << pair.second.name << delimStr
+                     << pair.second.description << endl;
             }
-
-            cout << endl;
-            cout << self->db->items.toString() << endl;
         } // end of "list items"
     },
     {
         "list loans",
         [](CLI *self) // Shows a list of all the loans.
         {
-            string delimStr;
-            delimStr += Loan().fieldDelimiter;
-            string legend =
-                "Loan ID" + delimStr + "Item ID" + delimStr + "Borrower" + delimStr + "Created On";
+            string delimStr = "\t\t";
+            string legend = "Loan ID" + delimStr + "Item ID" + delimStr + "Item Name" + delimStr +
+                            "Borrower" + delimStr + "Created On";
 
-            cout << legend << endl;
+            cout << legend << endl << string(legend.size(), ' ') << endl;
 
-            for (size_t i = 0; i < legend.size(); ++i)
+            for (const auto &pair : self->db->loans.records)
             {
-                cout << "-";
+                cout << pair.first << delimStr << pair.second.itemID << delimStr
+                     << self->db->items.records.at(pair.second.itemID).name << delimStr
+                     << pair.second.name << delimStr << pair.second.timeCreated << endl;
             }
-
-            cout << endl;
-            cout << self->db->loans.toString() << endl;
         } // end of "list loans"
     },
     {
