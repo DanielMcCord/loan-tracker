@@ -310,8 +310,7 @@ string CLI::prompt(const string &message) const
 {
     cout << message << flush;
     string input;
-    // Using std::ws to discard whitespace.
-    getline(cin >> ws, input);
+    getline(cin, input);
     return input;
 }
 
