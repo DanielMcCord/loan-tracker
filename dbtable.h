@@ -96,12 +96,6 @@ DBTable<RecordT>::DBTable(const std::string &serialized) : DBTable()
         RecordT record(recordStr);
         // Using (allowRecycledKey = false) in this call prevents key invalidation.
         add(record, false);
-
-        // Can't put this in the iteration expression of the for loop because of the constexpr
-        if constexpr (std::is_base_of_v<AutoIncrementable, RecordT>)
-        {
-            ++nextKey;
-        }
     }
 }
 
