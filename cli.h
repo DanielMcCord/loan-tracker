@@ -16,12 +16,11 @@ class CLI
     CLI(LoanSchema *db = nullptr);
 
     void welcome() const;
+    bool attemptCommand(const std::string &command);
     /**
      * @brief Displays a message when an invalid command is used.
      * @param command The command that was used.
      */
-
-    bool attemptCommand(const std::string &command);
     void onInvalidCommand(const std::string &command) const;
     void listValidCommands() const;
     void commandHint();

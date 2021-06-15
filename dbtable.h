@@ -10,8 +10,7 @@
 
 /**
  * A model of some of the features of a table in a relational database.
- * Recognizes AutoIncrementable and DatabaseParentAwarable, and will implement the
- * relevant semantics if the record type inherits from either of those classes.
+ * Will auto-increment the primary keys of records that inherit from AutoIncrementable.
  */
 template <typename RecordT> class DBTable
 {
